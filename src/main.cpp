@@ -190,6 +190,12 @@ bool isCarTooClose(int const lane, json sensor_fusion, int const range_in_mts, d
   return false;
 }
 
+int agressive_range = 15;
+int confort_range = 30;
+
+// Not used for now, but to experiment later 🏎
+bool race_mode = false;
+
 int main() {
   uWS::Hub h;
 
@@ -282,76 +288,36 @@ int main() {
 						}
 
 						//bool too_close = false;
-						bool is_car_ahead = isCarTooClose(lane, sensor_fusion, 30, car_s, prev_size, false);
+						bool is_car_ahead = isCarTooClose(lane, sensor_fusion, confort_range, car_s, prev_size, false);
 
-						if(is_car_ahead)
-						{
+						if (is_car_ahead) {
 							int try_left_lane = lane - 1;
 							int try_right_lane = lane + 1;
 							bool lane_switch = false;
 							cout << "Car ahead in my lane: " << lane << ", looking for lane change." << endl;
-							if(try_left_lane >= 0)// car is in left most lane - so can only go to right lane
-							{
-								lane_switch = !isCarTooClose(try_left_lane, sensor_fusion, 30, car_s, prev_size, true);
+							// car is in left most lane - so can only go to right lane
+							if (try_left_lane >= 0) {
+								lane_switch = !isCarTooClose(try_left_lane, sensor_fusion, confort_range, car_s, prev_size, true);
 								if(lane_switch)
 								{
 									lane = try_left_lane;
 									cout << "Moved to left lane: " << try_left_lane << endl;
 								}
-
 							}
-							if(try_right_lane <= 2 && !lane_switch)
-							{
-								lane_switch = !isCarTooClose(try_right_lane, sensor_fusion, 30, car_s, prev_size, true); 
-								if(lane_switch)
-								{
+
+							if(try_right_lane <= 2 && !lane_switch) {
+								lane_switch = !isCarTooClose(try_right_lane, sensor_fusion, confort_range, car_s, prev_size, true); 
+								if(lane_switch) {
 									lane = try_right_lane;
 									cout << "Moved to Right lane: " << try_right_lane << endl;
 								}
-								// else{
-								//   cout << "Did not get safe way to move to Right lane: " << try_right_lane << endl;
-								// }
 							}
 							ref_vel -= .224;
-						}
-						else if(ref_vel < 49.5)
-						{
+						} else if(ref_vel < 49.5) {
 							ref_vel += .224;
 						}
+
           currentLane = 2 + 4*lane;
-
-						// // Find re_v to use
-						// for (int i = 0; i < sensor_fusion.size(); i++) {
-						// 	// car is in my lane
-						// 	float d = sensor_fusion[i][6];
-						// 	if (d < (2+4*lane+2) && d > (2+4*lane-2)) {
-						// 		double vx = sensor_fusion[i][3];
-						// 		double vy = sensor_fusion[i][4];
-
-						// 		double check_speed = sqrt(vx*vx + vy*vy);
-						// 		double check_car_s = sensor_fusion[i][5];
-
-						// 		check_car_s += ((double)prev_size * .02 * check_speed);
-
-						// 		// check s values greater than mine and s gap
-						// 		if ((check_car_s > car_s) && ((check_car_s - car_s) < 30) ) {
-
-						// 			// flag to change lanes
-						// 			//ref_vel = 29.5; //mph
-						// 			too_close = true;
-
-						// 			if (lane > 0) {
-						// 				lane = 0;
-						// 			}
-						// 		}
-						// 	}
-						// }
-
-						// if (too_close) {
-						// 	ref_vel -= .224;
-						// } else if (ref_vel < 49.5) {
-						// 	ref_vel += .224;
-						// }
 
 						// Create a list of widely spaced (x, y) waypoints, evenly spaced at 30m
 						vector<double> ptsx;

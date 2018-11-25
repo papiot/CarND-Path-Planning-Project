@@ -138,3 +138,24 @@ still be compilable with cmake and make./
 ## How to write a README
 A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
 
+## Reflections
+
+I started with the starter code given in the Q&A video. 
+
+Initially I made the car just go straight forward. The next step
+was to implement a way for the car to keep the lane. This was pretty
+straight forward using the s and d coordinates coming from sensor fusion, but the car was not following a smooth path.
+
+The next thing was to introduce the spline library to make a smooth curve for changing direction within the lane.
+
+Detecting a car was in our lane and going slow was a bit tricky, but in the end found a solution.
+
+The (very basic) state machine first checks to see if it can safely change lanes to the left and then to the right before starting to slow down if either option is not possible.
+
+I have created 2 variables for the distance the car checks -> one is normal (confort) mode and the other one is aggressive. Of course the aggressive mode will not pass the project, but it's fun to watch :))
+
+A few things I want to add, but after the initial submission:
+
+1. Adaptive cruise control (basically instead of slowing down to a pre-defined speed, try to match the speed of the car in front while keeping a reasonably safe distance)
+2. Race mode where I try to go around the track as fast as possible, not caring about acceleration, but making sure there are no collisions.
+
